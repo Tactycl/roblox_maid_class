@@ -1,21 +1,69 @@
-# Roblox Maid Class
+# Roblox Maid Class  
 
-This class is to clean up pointless objects & more easily.
+The **Maid Class** is a utility designed to **simplify cleanup and resource management** in Roblox. It allows developers to efficiently manage tasks such as connections, functions, and objects, ensuring proper cleanup to prevent memory leaks and unintended behavior.  
 
-# API
+---
 
-.new(), returns (Maid) -> Creates a new maid object<br/>
+## Key Benefits  
+- Centralized management of cleanup tasks.  
+- Supports deferred cleanup for scheduled operations.  
+- Reduces boilerplate and ensures consistent resource handling.  
 
-:GiveTask(job: Task), returns (job: Task, task_id: number) -> Gives a task to cleanup later to the maid, a Task can be: RBXScriptConnection, any function, any object with a Destroy or Disconnect method<br/>
+---
 
-:Cleanup(), returns none -> Cleans all given tasks<br/>
+## API Reference  
 
-:Clean(task_id: number), returns none -> Cleans a specific task given by using the task_id<br/>
+### Constructor  
+- **`.new(): Maid`**  
+  Creates a new Maid object.  
 
-:CleanupDeferred(job: Task, delayTime: number), returns none -> Cleans the task given after the specified amount of time<br/>
+---
 
-:Size(), returns (size: number) -> Returns the amount of Tasks<br/>
+### Task Management  
+- **`:GiveTask(job: Task): (job: Task, task_id: number)`**  
+  Assigns a task to the Maid for future cleanup.  
+  - **Task Types:** `RBXScriptConnection`, functions, or any object with a `Destroy` or `Disconnect` method.  
 
-:IsEmpty(), returns (empty: boolean) -> Returns true if maid has no tasks given to it<br/>
+- **`:Cleanup()`**  
+  Cleans up **all tasks** currently assigned to the Maid.  
 
-:Destroy() -> Clears up maid by calling :Cleanup() on itself and clearing itself<br/>
+- **`:Clean(task_id: number)`**  
+  Cleans a **specific task** identified by `task_id`.  
+
+- **`:CleanupDeferred(job: Task, delayTime: number)`**  
+  Cleans the provided task **after a specified delay**.  
+
+- **`:Size(): number`**  
+  Returns the **number of tasks** currently managed by the Maid.  
+
+- **`:IsEmpty(): boolean`**  
+  Returns `true` if no tasks are assigned.  
+
+- **`:Destroy()`**  
+  Performs a **full cleanup** of the Maid object and clears internal references.  
+
+---
+
+## Example Usage  
+
+```lua
+local Maid = require(path.to.Maid)
+local maid = Maid.new()
+
+-- Add a connection for cleanup
+local connection = game:GetService("RunService").Heartbeat:Connect(function()
+    print("Tick")
+end)
+maid:GiveTask(connection)
+
+-- Add a function
+maid:GiveTask(function()
+    print("Cleaning up custom function")
+end)
+
+-- Cleanup all tasks manually
+maid:Cleanup()
+
+-- Check if maid is empty
+print(maid:IsEmpty()) -- true
+```
