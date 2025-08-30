@@ -10,7 +10,7 @@ export type Maid = {
 	_tasks: {Task},
 	
 	new: () -> (Maid),
-	GiveTask: (self: Maid, job: Task) -> (),
+	GiveTask: (self: Maid, job: Task) -> (Task, number),
 	Cleanup: (self: Maid) -> (),
 	Clean: (self: Maid, task_id: number) -> (),
 	CleanupDeferred: (self: Maid, job: Task, delayTime: number) -> (),
@@ -24,13 +24,13 @@ Maid.__index = Maid
 
 -- PUBLIC
 
-function Maid.new() : Maid
+function Maid.new(): Maid
 	local self = setmetatable({}, Maid)
 	self._tasks = {}
-	return (self :: unknown) :: Maid
+	return (self:: unknown):: Maid
 end
 
-function Maid:GiveTask(job : Task)
+function Maid:GiveTask(job: Task): (Task, number)
 	local task_id = #self._tasks + 1
 	self._tasks[task_id] = job
 
@@ -45,8 +45,8 @@ function Maid:Cleanup()
 	table.clear(self._tasks)
 end
 
-function Maid:Clean(task_id : number)
-	local job : Task = self._tasks[task_id]
+function Maid:Clean(task_id: number)
+	local job: Task = self._tasks[task_id]
 	
 	if typeof(job) == "RBXScriptConnection" then
 		job:Disconnect()
@@ -76,14 +76,14 @@ function Maid:Clean(task_id : number)
 	self._tasks[task_id] = nil
 end
 
-function Maid:CleanupDeferred(job : Task, delayTime : number)
+function Maid:CleanupDeferred(job: Task, delayTime: number)
 	local task_id = self:GiveTask(job)
 	task.delay(delayTime, function()
 		self:Clean(task_id)
 	end)
 end
 
-function Maid:Size() : number
+function Maid:Size(): number
 	local count = 0
 	for _ in self._tasks do
 		count += 1
@@ -91,7 +91,7 @@ function Maid:Size() : number
 	return count
 end
 
-function Maid:IsEmpty() : boolean
+function Maid:IsEmpty(): boolean
 	return self:Size() == 0
 end
 
