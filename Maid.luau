@@ -25,9 +25,9 @@ Maid.__index = Maid
 -- PUBLIC
 
 function Maid.new(): Maid
-	local self = setmetatable({}, Maid)
+	local self = (setmetatable({}, Maid):: unknown):: Maid
 	self._tasks = {}
-	return (self:: unknown):: Maid
+	return self
 end
 
 function Maid:GiveTask(job: Task): (Task, number)
